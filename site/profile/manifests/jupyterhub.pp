@@ -21,6 +21,20 @@ class profile::jupyterhub::hub (
     tags  => ['jupyterhub'],
     token => lookup('profile::consul::acl_api_token'),
   }
+
+  file { '/sbin/ipa_create_user.py':
+    source => 'puppet:///modules/profile/users/ipa_create_user.py',
+    mode   => '0755',
+  }
+
+# AUTOMATE THIS
+# ipa role-add 'JupyterHub' --desc='JupyterHub User management'
+# ipa role-add-privilege 'JupyterHub' --privilege='Group Administrators'
+# ipa role-add-privilege 'JupyterHub' --privilege='User Administrators'
+# ipa user-add jupyterhub --first Jupyter --last Hub
+# ipa role-add-member 'JupyterHub' --users=jupyterhub
+# ipa-getkeytab -p jupyterhub -k /etc/jupyterhub/jupyterhub.keytab
+
 }
 
 class profile::jupyterhub::node {
